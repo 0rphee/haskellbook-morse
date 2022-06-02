@@ -1,8 +1,11 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use getLine" #-}
+{-# HLINT ignore "Use isEOF" #-}
+{-# HLINT ignore "Use unwords" #-}
 module Main where
 
 import Control.Monad (forever, when) 
 import Data.List (intercalate)
-import Data.Traversable (traverse)
 import Morse (stringToMorse, morseToChar) 
 import System.Environment (getArgs) 
 import System.Exit (exitFailure,exitSuccess)

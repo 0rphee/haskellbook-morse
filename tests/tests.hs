@@ -66,3 +66,60 @@ pairGenIntString :: Gen (Pair Int String)
 pairGenIntString = pairGen
 
 -- Greater than the sum of its parts
+data Sum a b = First a | Second b deriving (Eq, Show)
+
+sumGenEqual :: (Arbitrary a, Arbitrary b)
+            => Gen (Sum a b)
+sumGenEqual = do
+    a <- arbitrary
+    b <- arbitrary
+    oneof [return $ First a, return $ Second b]
+
+sumGenCharInt :: Gen (Sum Char Int)
+sumGenCharInt = sumGenEqual
+
+sumGenFirstPls :: (Arbitrary a, Arbitrary b)
+               => Gen (Sum a b)
+sumGenFirstPls = do
+    a <- arbitrary
+    b <- arbitrary
+    frequency [(10, return $ First a), (1, return $ Second b)]
+
+sumGenCharIntFirst :: Gen (Sum Char Int)
+sumGenCharIntFirst = sumGenFirstPls
+
+-- Hangman Testing
+fillInCharacter :: Puzzle -> Char -> Puzzle 
+fillInCharacter (Puzzle word filledInSoFar s) c =
+    Puzzle word newFilledInSoFar (c : s)
+    where zipper guessed wordChar guessChar = 
+            if wordChar == guessed
+            then Just wordChar
+            else guessChar 
+          newFilledInSoFar = 
+            let zd = (zipper c)
+            in zipWith zd word filledInSoFar
+
+
+
+-- CoArbitrary: counterpart to Arbitrary, generation of functions 
+-- fitting a particular type
+{- 
+    {-# LANGUAGE DeriveGeneric #-}
+    module CoArbitrary where import GHC.Generics
+    import Test.QuickCheck
+    
+    data Bool' = True' | False' deriving (Generic)
+    instance CoArbitrary Bool'    
+
+    trueGen :: Gen Int
+    trueGen = coarbitrary True' arbitrary
+    
+    falseGen :: Gen Int
+    falseGen = coarbitrary False' arbitrary
+ 
+ Essentially this lets you randomly generate a function.
+ -}
+
+ -- 14.7 Chapter Exercises
+ 
